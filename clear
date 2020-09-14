@@ -1,0 +1,8 @@
+pa view:clear
+pa cache:clear
+pa route:clear
+pa auth:clear-resets
+#pa backup:clean
+#pa config:clear
+#pa debugbar:clear
+chown -Rc www-data:www-data ../ips/
