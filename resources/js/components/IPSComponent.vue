@@ -88,7 +88,7 @@
                     <v-btn color="success" class="mr-4" @click="validateForm">Validiraj podatke</v-btn>
                     <v-btn color="warning" class="mr-4" @click="resetValidation">Poništi validaciju</v-btn>
                     <v-btn color="error" class="mr-4" @click="resetForm">Obriši formular</v-btn>
-                    <v-btn color="error" @click="fillForm">Popuni formular</v-btn>
+                    <!--<v-btn color="error" @click="fillForm">Popuni formular</v-btn>-->
                 </v-form>
             </v-col>
         </v-row>
@@ -145,16 +145,6 @@
                                             </template>
                                             <span v-if="copied">Sadržaj je kopiran</span>
                                             <span v-else>Kopiraj</span>
-                                        </v-tooltip>
-                                    </v-col>
-                                    <v-col class="px-0">
-                                        <v-tooltip right>
-                                            <template v-slot:activator="{ on, attrs }">
-                                                <v-btn icon v-on="on">
-                                                    <v-icon>mdi-share-variant</v-icon>
-                                                </v-btn>
-                                            </template>
-                                            <span>Podeli na email</span>
                                         </v-tooltip>
                                     </v-col>
                                 </v-row>
