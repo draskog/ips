@@ -5,7 +5,7 @@
  */
 
 require('./bootstrap');
-
+import "babel-polyfill";
 window.Vue = require('vue');
 /**
  * The following block of code may be used to automatically register your
@@ -24,6 +24,7 @@ window.Vue = require('vue');
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 Vue.config.productionTip = false;
+
 import vuetify from "./plugins/vuetify";
 import App from "./App.vue";
 import router from "./router";

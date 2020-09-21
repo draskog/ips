@@ -1,7 +1,10 @@
 <template>
     <v-app>
         <v-app-bar app color="primary" dark>
-            <v-toolbar-title>IPS QR kod</v-toolbar-title>
+            <v-toolbar-title>
+                <v-icon>mdi-qrcode</v-icon>
+                IPS QR kod
+            </v-toolbar-title>
             <v-spacer></v-spacer>
             <v-btn
                     v-for="link in links"
@@ -18,6 +21,22 @@
         </v-main>
         <v-footer dark padless>
             <v-layout justify-center wrap>
+                <v-card
+                        class="mx-auto"
+                        max-width="160px"
+                >
+                    <v-img
+                            src="/images/donate.png"
+                            height="145px"
+                    ></v-img>
+
+                    <v-card-title>
+                        Doniraj
+                    </v-card-title>
+                    <v-card-subtitle>
+                        doniraj 100 dinara za razvoj pametnih rešenja
+                    </v-card-subtitle>
+                </v-card>
                 <v-card flat tile class="layout justify-center wrap indigo lighten-1 white--text text-center">
                     <v-card-text>
                         <v-btn
@@ -36,6 +55,8 @@
                         Jednostavna aplikacija za generisanje IPS QR kodova za plaćanje računa.<br>
                         Veći broja banaka podržava plaćanje preko ovakog generisanog koda, postoji mogućnost da neke od banka ne prihvataju generisan kod.
                     </v-card-text>
+                    <v-divider></v-divider>
+
                     <v-divider></v-divider>
                     <v-card-text class="white--text">
                         Copyright {{ new Date().getFullYear() }} — Draško Gajić — IPS QR kod — MIT License - Verzija 1.0.1
