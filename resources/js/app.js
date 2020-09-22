@@ -6,7 +6,12 @@
 
 require('./bootstrap');
 import "babel-polyfill";
+import router from "./router";
+import VueClipboard from "vue-clipboard2";
+import vuetify from "./plugins/vuetify";
+import App from "./App.vue";
 window.Vue = require('vue');
+
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
@@ -23,12 +28,7 @@ window.Vue = require('vue');
  * the page. Then, you may begin adding components to this application
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
-Vue.config.productionTip = false;
-
-import vuetify from "./plugins/vuetify";
-import App from "./App.vue";
-import router from "./router";
-import VueClipboard from "vue-clipboard2";
+Vue.config.productionTip = true;
 Vue.use(VueClipboard);
 
 new Vue({

@@ -88,7 +88,7 @@
                     <v-btn color="success" class="mr-4" @click="validateForm">Validiraj podatke</v-btn>
                     <v-btn color="warning" class="mr-4" @click="resetValidation">Poništi validaciju</v-btn>
                     <v-btn color="error" class="mr-4" @click="resetForm">Obriši formular</v-btn>
-                    <!--<v-btn color="error" @click="fillForm">Popuni formular</v-btn>-->
+                    <v-btn color="error" @click="fillForm">Popuni formular</v-btn>
                 </v-form>
             </v-col>
         </v-row>
@@ -178,20 +178,8 @@
 </template>
 
 <script>
-    String.prototype.slugify = function (separator = "-")
-    {
-        return this
-            .toString()
-            .normalize('NFD')                   // split an accented letter in the base letter and the acent
-            .replace(/[\u0300-\u036f]/g, '')   // remove all previously split accents
-            .toLowerCase()
-            .trim()
-            .replace(/[^a-z0-9 ]/g, '')   // remove all chars not letters, numbers and spaces (to be replaced)
-            .replace(/\s+/g, separator);
-    };
     const iban = require('iban');
     const qrcode = require('qrcode');
-    const ips = require('ips-qr-code');
     let banke = [];
     import {
         copyElementContent
@@ -339,7 +327,7 @@
             },
             posalji: function (event)
             {
-                const args = {
+                var args = {
                     c: this.c,
                     v: this.v,
                     k: this.k,
@@ -348,33 +336,26 @@
                     n: this.n,
                     sf: this.sf,
                     s: this.s,
-                    'to-datauri': true
+                    rs: '09-2020'
                 };
-                ips(args)
-                    .then(dataString =>
+                args = obsKeysToString(args, '|');
+                qrcode.toDataURL(args)
+                    .then(data =>
                     {
-                        qrcode.toDataURL(dataString)
-                            .then(data =>
-                            {
-                                axios.post('/', {
-                                    imageBase64: data
-                                }).then(response =>
-                                {
-                                    this.slika = response.data;
-                                    this.dialog = true;
-                                }).catch(error =>
-                                {
-                                    console.error(error);
-                                });
-                            }).catch(error =>
+                        axios.post('/', {
+                            imageBase64: data
+                        }).then(response =>
                         {
-                            console.error(error)
-                        })
-                    })
-                    .catch(error =>
-                    {
-                        console.error(error);
-                    });
+                            this.slika = response.data;
+                            this.dialog = true;
+                        }).catch(error =>
+                        {
+                            console.error(error);
+                        });
+                    }).catch(error =>
+                {
+                    console.error(error)
+                });
             }
         }
     }
@@ -383,5 +364,37 @@
         return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
             (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
         );
+    }
+    const capitalizeKeys = (obj) =>
+    {
+        const isObject = o => Object.prototype.toString.apply(o) === '[object Object]'
+        const isArray = o => Object.prototype.toString.apply(o) === '[object Array]'
+
+        let transformedObj = isArray(obj) ? [] : {}
+
+        for (let key in obj)
+        {
+            // replace the following with any transform function
+            const transformedKey = key.toUpperCase()
+
+            if (isObject(obj[key]) || isArray(obj[key]))
+            {
+                transformedObj[transformedKey] = capitalizeKeys(obj[key])
+            } else
+            {
+                transformedObj[transformedKey] = obj[key]
+            }
+
+        }
+        return transformedObj
+    }
+    function obsKeysToString(o, sep)
+    {
+        return ["k", "v", "c", "r", "i", "n", "rs", "sf", "s"]
+            .map(opt =>
+                o[opt] ? `${opt.toUpperCase()}:${o[opt]}` : undefined
+            )
+            .filter(i => i)
+            .join(sep);
     }
 </script>

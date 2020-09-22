@@ -41,6 +41,6 @@ module.exports = {
 }
 
 mix.js('resources/js/app.js', 'public/js')
-//    .copy('resources/images', 'public/images')
-//    .copy('resources/icons', 'public/icons')
+//    .copyDirectory('resources/images', 'public/images')
+//    .copyDirectory('resources/icons', 'public/icons')
     .sass('resources/sass/app.scss', 'public/css');
