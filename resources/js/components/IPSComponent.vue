@@ -88,7 +88,7 @@
                     <v-btn color="success" class="mr-4" @click="validateForm">Validiraj podatke</v-btn>
                     <v-btn color="warning" class="mr-4" @click="resetValidation">Poništi validaciju</v-btn>
                     <v-btn color="error" class="mr-4" @click="resetForm">Obriši formular</v-btn>
-                    <v-btn color="error" @click="fillForm">Popuni formular</v-btn>
+                    <!--<v-btn color="error" @click="fillForm">Popuni formular</v-btn>-->
                 </v-form>
             </v-col>
         </v-row>
