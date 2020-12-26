@@ -346,7 +346,7 @@ export default {
         n: this.n,
         sf: this.sf,
         s: this.s,
-        rl: moment().format('MM-YYYY')
+        rl: moment().format('MMYYYY')
       }
       args = obsKeysToString(args, '|')
       qrcode.toDataURL(args)
