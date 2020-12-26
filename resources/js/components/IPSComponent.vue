@@ -182,6 +182,8 @@
 const iban = require('iban')
 const qrcode = require('qrcode')
 let banke = []
+import * as moment from 'moment'
+
 export default {
   data: () => ({
     copied: false,
@@ -344,7 +346,7 @@ export default {
         n: this.n,
         sf: this.sf,
         s: this.s,
-        rl: '09-2020'
+        rl: moment().format('MM-YYYY')
       }
       args = obsKeysToString(args, '|')
       qrcode.toDataURL(args)
@@ -396,7 +398,7 @@ const capitalizeKeys = (obj) => {
 
 function obsKeysToString (o, sep)
 {
-  return ['k', 'v', 'c', 'r', 'i', 'n', 'rs', 'sf', 's']
+  return ['k', 'v', 'c', 'r', 'i', 'n', 'rl', 'sf', 's']
       .map(opt =>
           o[opt] ? `${opt.toUpperCase()}:${o[opt]}` : undefined
       )
