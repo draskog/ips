@@ -210,8 +210,6 @@ export default {
     },
     validRacun ()
     {
-      console.log(this.r)
-      console.log(iban.isValid(this.iban))
       return iban.isValid(this.iban)
     },
     validForm ()
