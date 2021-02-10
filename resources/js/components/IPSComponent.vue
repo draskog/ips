@@ -26,51 +26,14 @@
               :rules="sRules"
               required
           ></v-text-field>
-          <v-row>
-            <v-col
-                cols="12"
-                md="2"
-            >
-              <v-autocomplete
-                  @blur="handleRacun"
-                  v-model="racun1"
-                  :rules="racun1Rules"
-                  :counter="3"
-                  label="Fiksni broj banke"
-                  :items="banks"
-                  required
-              ></v-autocomplete>
-            </v-col>
-
-            <v-col
-                cols="12"
-                md="8"
-            >
-              <v-text-field
-                  @blur="handleRacun"
-                  v-model="racun2"
-                  :rules="racun2Rules"
-                  :counter="13"
-                  label="Broj računa"
-                  required
-              ></v-text-field>
-            </v-col>
-
-            <v-col
-                cols="12"
-                md="2"
-            >
-              <v-text-field
-                  @blur="handleRacun"
-                  type="number"
-                  v-model="racun3"
-                  :rules="racun3Rules"
-                  :counter="2"
-                  label="Kontrolni broj"
-                  required
-              ></v-text-field>
-            </v-col>
-          </v-row>
+          <v-text-field
+              @blur="handleRacun"
+              v-model="racun"
+              :rules="racunRules"
+              :counter="20"
+              label="Broj računa"
+              required
+          ></v-text-field>
           <v-text-field
               type="number"
               v-model="iznos"
@@ -88,7 +51,7 @@
           <v-btn color="success" class="mr-4" @click="validateForm">Validiraj podatke</v-btn>
           <v-btn color="warning" class="mr-4" @click="resetValidation">Poništi validaciju</v-btn>
           <v-btn color="error" class="mr-4" @click="resetForm">Obriši formular</v-btn>
-          <!--<v-btn color="error" @click="fillForm">Popuni formular</v-btn>-->
+          <v-btn color="error" @click="fillForm">Popuni formular</v-btn>
         </v-form>
       </v-col>
     </v-row>
@@ -110,7 +73,7 @@
                 <br>
                 {{ adresa }}
                 <br>
-                {{ racun1 }}-{{ racun2 }}-{{ racun3 }}
+                {{ racun }}
                 <br><br>
                 <img :src="'codes/'+slika">
               </div>
@@ -119,7 +82,7 @@
                 <br>
                 {{ adresa }}
                 <br>
-                {{ racun1 }}-{{ racun2 }}-{{ racun3 }}
+                {{ racun }}
                 <br><br>
                 <v-img
                     height="200"
@@ -192,14 +155,11 @@ export default {
     message: '',
     color: 'success',
     toast: false,
-    banks: [105, 115, 125, 145, 150, 155, 160, 165, 170, 180, 190, 200, 205, 220, 250, 265, 275, 285, 295, 310, 325, 330, 340, 355, 360, 370, 375, 380, 385],
     k: 'PR',
     c: '1',
     sf: '289',
     v: '01',
-    racun1: '',
-    racun2: '',
-    racun3: '',
+    racun: '',
     adresa: '',
     adresaRules: [
       value => !!value || 'Adresa primaoca je obavezana.',
@@ -214,17 +174,8 @@ export default {
     sRules: [
       value => !!value || 'Svrha plaćanja je obavezana.'
     ],
-    racun1Rules: [
-      value => !!value || 'Fiksni broj banke je obavezan.',
-      value => banke.includes(value) || 'Fiksni broj banke je neispravan.'
-    ],
-    racun2Rules: [
+    racunRules: [
       value => !!value || 'Broj računa je obavezan.',
-      value => value.length === 13 || 'Broj računa je neispravan.'
-    ],
-    racun3Rules: [
-      value => !!value || 'Kontrolni broj je obavezan.',
-      value => value.length === 2 || 'Kontrolni broj je neispravan.'
     ],
     iznos: 1,
     iznosRules: [
@@ -247,7 +198,11 @@ export default {
     },
     r ()
     {
-      return this.racun1 + '' + this.racun2 + '' + this.racun3
+      return this.racun.replace(/\D/g, '')
+    },
+    iban ()
+    {
+      return 'RS35' + this.r
     },
     i ()
     {
@@ -255,11 +210,13 @@ export default {
     },
     validRacun ()
     {
-      return iban.isValid('RS35' + this.r)
+      console.log(this.r)
+      console.log(iban.isValid(this.iban))
+      return iban.isValid(this.iban)
     },
     validForm ()
     {
-      return this.formValidity && iban.isValid('RS35' + this.r)
+      return this.formValidity && this.validRacun
     }
   },
   methods: {
@@ -279,6 +236,10 @@ export default {
     },
     validateForm ()
     {
+      if (!this.validRacun && this.racunRules.length < 2)
+      {
+        this.racunRules.push(value => this.validRacun || 'Broj računa je neispravan.')
+      }
       this.$refs.ipsCodeForm.validate()
       if (!this.formValidity)
       {
@@ -297,9 +258,7 @@ export default {
       this.primaoc = 'Draško Gajić'
       this.adresa = 'Valjevska 10, Beograd'
       this.s = 'Fantasy'
-      this.racun1 = 275
-      this.racun2 = '0000330087024'
-      this.racun3 = '39'
+      this.racun = '275-330087024-39'
       this.iznos = 1000
     },
     copyMarkup ()
@@ -327,13 +286,16 @@ export default {
     },
     handleRacun ()
     {
-      if (this.racun2.length < 13)
+      this.$refs.ipsCodeForm.resetValidation()
+      var number, bank, account, control
+      number = this.racun.replace(/\D/g, '')
+      bank = number.substr(0, 3)
+      account = number.length < 20 ? number.substr(3, number.length - 5).padStart(13, '0') : number.substr(3, number.length - 5)
+      control = number.slice(-2)
+      this.racun = bank + '-' + account + '-' + control
+      if (!this.validRacun && this.racunRules.length < 2)
       {
-        this.racun2 = this.racun2.padStart(13, '0')
-      }
-      if (this.racun1.toString().length === 3 && this.racun2.length === 13 && this.racun3.length === 2 && this.racun2Rules.length === 2)
-      {
-        this.racun2Rules.push(value => this.validRacun || 'Broj računa je neispravan.')
+        this.racunRules.push(value => this.validRacun || 'Broj računa je neispravan.')
       }
     },
     posalji: function (event) {
@@ -346,6 +308,7 @@ export default {
         n: this.n,
         sf: this.sf,
         s: this.s,
+        ro: moment().format('MMYYYY'),
         rl: moment().format('MMYYYY')
       }
       args = obsKeysToString(args, '|')
@@ -398,7 +361,7 @@ const capitalizeKeys = (obj) => {
 
 function obsKeysToString (o, sep)
 {
-  return ['k', 'v', 'c', 'r', 'i', 'n', 'rl', 'sf', 's']
+  return ['k', 'v', 'c', 'r', 'i', 'n', 'ro', 'rl', 'sf', 's']
       .map(opt =>
           o[opt] ? `${opt.toUpperCase()}:${o[opt]}` : undefined
       )
