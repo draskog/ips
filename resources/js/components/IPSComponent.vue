@@ -68,7 +68,7 @@
           <v-container>
             <v-row justify="space-between">
               <div ref="kopiranje" contenteditable="true"
-                   style="position:absolute; top:-400px; left:-400px; background-color: white; color: black;">
+                   style="position:absolute; top:-800px; left:-800px; background-color: white; color: black;">
                 {{ primaoc }}
                 <br>
                 {{ adresa }}
@@ -76,6 +76,9 @@
                 {{ racun }}
                 <br><br>
                 <img :src="'codes/'+slika">
+                <br>
+                Ukoliko ne radi probati i sa ovim kodom
+                <img :src="'codes/'+slika1">
               </div>
               <v-col cols="auto">
                 {{ primaoc }}
@@ -88,6 +91,13 @@
                     height="200"
                     width="200"
                     :src="'codes/'+slika"
+                ></v-img>
+                <br>
+                Ukoliko ne radi probati i sa ovim kodom
+                <v-img
+                    height="200"
+                    width="200"
+                    :src="'codes/'+slika1"
                 ></v-img>
               </v-col>
 
@@ -152,6 +162,7 @@ export default {
     copied: false,
     dialog: false,
     slika: false,
+    slika1: false,
     message: '',
     color: 'success',
     toast: false,
@@ -280,6 +291,13 @@ export default {
           }).catch(error => {
         console.error(error)
       })
+      axios.delete('/' + this.slika1)
+          .then(response => {
+            this.slika1 = false
+            this.dialog = false
+          }).catch(error => {
+        console.error(error)
+      })
 
     },
     handleRacun ()
@@ -309,13 +327,38 @@ export default {
         ro: moment().format('MMYYYY'),
         rl: moment().format('MMYYYY')
       }
+      var args1 = {
+        c: this.c,
+        v: this.v,
+        k: this.k,
+        r: this.r,
+        i: this.i,
+        n: this.n,
+        sf: this.sf,
+        s: this.s
+      }
       args = obsKeysToString(args, '|')
+
       qrcode.toDataURL(args)
           .then(data => {
             axios.post('/', {
               imageBase64: data
             }).then(response => {
               this.slika = response.data
+              this.dialog = true
+            }).catch(error => {
+              console.error(error)
+            })
+          }).catch(error => {
+        console.error(error)
+      })
+      args1 = obsKeysToString(args1, '|')
+      qrcode.toDataURL(args1)
+          .then(data => {
+            axios.post('/', {
+              imageBase64: data
+            }).then(response => {
+              this.slika1 = response.data
               this.dialog = true
             }).catch(error => {
               console.error(error)
